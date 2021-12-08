@@ -167,6 +167,7 @@ class __ClockSingleItemWidgetState extends State<_ClockSingleItemWidget> {
         sigmaY: _animating ? 6 : 0,
         child: ListWheelScrollView.useDelegate(
           itemExtent: 200,
+          physics: const NeverScrollableScrollPhysics(),
           controller: _scrollController,
           childDelegate: ListWheelChildLoopingListDelegate(
             children: List.generate(

@@ -32,6 +32,15 @@ class _JustClockFaceState extends State<JustClockFace> {
     ];
   }
 
+  Offset get _randomValue {
+    final maxHeight = (MediaQuery.of(context).size.height - 200) / 2;
+    final maxWidth = (MediaQuery.of(context).size.width - 112 * 6) / 2;
+    return Offset(
+      Random().nextBool() ? -1 : 1 * Random().nextDouble() * maxWidth,
+      Random().nextBool() ? -1 : 1 * Random().nextDouble() * maxHeight,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -39,8 +48,7 @@ class _JustClockFaceState extends State<JustClockFace> {
     _timer = Timer.periodic(aSecond, (timer) {
       time = _genTime;
       if (timer.tick % 12 == 0) {
-        _offset =
-            Offset(Random().nextDouble() * 64, Random().nextDouble() * 64);
+        _offset = _randomValue;
       }
       setState(() {});
     });

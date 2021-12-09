@@ -8,7 +8,7 @@ class AnimatedTranslate extends ImplicitlyAnimatedWidget {
     this.offset = Offset.zero,
     Duration duration = const Duration(milliseconds: 600),
     required this.child,
-  }) : super(key: key, duration: duration);
+  }) : super(key: key, duration: duration, curve: Curves.easeInOutCubic);
 
   @override
   _AnimatedTranslateState createState() => _AnimatedTranslateState();

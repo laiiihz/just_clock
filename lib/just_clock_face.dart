@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:just_clock/animated_blur.dart';
@@ -159,7 +158,9 @@ class __ClockSingleItemWidgetState extends State<_ClockSingleItemWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(),
+      decoration: const BoxDecoration(
+        color: Colors.blue,
+      ),
       clipBehavior: Clip.hardEdge,
       width: 112,
       height: 200,
@@ -167,6 +168,7 @@ class __ClockSingleItemWidgetState extends State<_ClockSingleItemWidget> {
         sigmaY: _animating ? 6 : 0,
         child: ListWheelScrollView.useDelegate(
           itemExtent: 200,
+          diameterRatio: 0.9,
           physics: const NeverScrollableScrollPhysics(),
           controller: _scrollController,
           childDelegate: ListWheelChildLoopingListDelegate(
@@ -176,7 +178,9 @@ class __ClockSingleItemWidgetState extends State<_ClockSingleItemWidget> {
                 child: Text(
                   '$index',
                   style: TextStyle(
-                    fontSize: 184,
+                    fontSize: 200,
+                    height: 1,
+                    fontFamily: 'noto',
                     fontWeight: widget.weight,
                   ),
                 ),

@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:just_clock/animated_blur.dart';
+import 'package:just_clock/animated_translate.dart';
 import 'package:quiver/time.dart';
 
 /// 24h clock face
@@ -17,7 +19,7 @@ class JustClockFace extends StatefulWidget {
 class _JustClockFaceState extends State<JustClockFace> {
   late Timer _timer;
   late List<int> time;
-
+  Offset _offset = Offset.zero;
   List<int> get _genTime {
     var now = DateTime.now();
     return [
@@ -36,6 +38,10 @@ class _JustClockFaceState extends State<JustClockFace> {
     time = _genTime;
     _timer = Timer.periodic(aSecond, (timer) {
       time = _genTime;
+      if (timer.tick % 12 == 0) {
+        _offset =
+            Offset(Random().nextDouble() * 64, Random().nextDouble() * 64);
+      }
       setState(() {});
     });
   }
@@ -48,42 +54,46 @@ class _JustClockFaceState extends State<JustClockFace> {
 
   @override
   Widget build(BuildContext context) {
+    var clockFace = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _ClockSingleItemWidget(
+          weight: FontWeight.bold,
+          value: _genTime[0],
+          maxDigit: 3,
+        ),
+        _ClockSingleItemWidget(
+          weight: FontWeight.bold,
+          value: _genTime[1],
+          maxDigit: 10,
+        ),
+        _ClockSingleItemWidget(
+          weight: FontWeight.normal,
+          value: _genTime[2],
+          maxDigit: 6,
+        ),
+        _ClockSingleItemWidget(
+          weight: FontWeight.normal,
+          value: _genTime[3],
+          maxDigit: 10,
+        ),
+        _ClockSingleItemWidget(
+          weight: FontWeight.w200,
+          value: _genTime[4],
+          maxDigit: 6,
+        ),
+        _ClockSingleItemWidget(
+          weight: FontWeight.w200,
+          value: _genTime[5],
+          maxDigit: 10,
+        ),
+      ],
+    );
     return Scaffold(
       body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _ClockSingleItemWidget(
-              weight: FontWeight.bold,
-              value: _genTime[0],
-              maxDigit: 3,
-            ),
-            _ClockSingleItemWidget(
-              weight: FontWeight.bold,
-              value: _genTime[1],
-              maxDigit: 10,
-            ),
-            _ClockSingleItemWidget(
-              weight: FontWeight.normal,
-              value: _genTime[2],
-              maxDigit: 6,
-            ),
-            _ClockSingleItemWidget(
-              weight: FontWeight.normal,
-              value: _genTime[3],
-              maxDigit: 10,
-            ),
-            _ClockSingleItemWidget(
-              weight: FontWeight.w200,
-              value: _genTime[4],
-              maxDigit: 6,
-            ),
-            _ClockSingleItemWidget(
-              weight: FontWeight.w200,
-              value: _genTime[5],
-              maxDigit: 10,
-            ),
-          ],
+        child: AnimatedTranslate(
+          offset: _offset,
+          child: clockFace,
         ),
       ),
     );
@@ -157,18 +167,14 @@ class __ClockSingleItemWidgetState extends State<_ClockSingleItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.blue,
-      ),
-      clipBehavior: Clip.hardEdge,
+    return SizedBox(
       width: 112,
       height: 200,
       child: AnimatedBlur(
         sigmaY: _animating ? 6 : 0,
         child: ListWheelScrollView.useDelegate(
           itemExtent: 200,
-          diameterRatio: 0.9,
+          diameterRatio: 0.3,
           physics: const NeverScrollableScrollPhysics(),
           controller: _scrollController,
           childDelegate: ListWheelChildLoopingListDelegate(

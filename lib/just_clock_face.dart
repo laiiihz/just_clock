@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:just_clock/animated_blur.dart';
 import 'package:just_clock/animated_translate.dart';
 import 'package:quiver/time.dart';
@@ -16,7 +17,8 @@ class JustClockFace extends StatefulWidget {
   _JustClockFaceState createState() => _JustClockFaceState();
 }
 
-class _JustClockFaceState extends State<JustClockFace> {
+class _JustClockFaceState extends State<JustClockFace>
+    with WidgetsBindingObserver {
   late Timer _timer;
   late List<int> time;
   Offset _offset = Offset.zero;
@@ -41,22 +43,61 @@ class _JustClockFaceState extends State<JustClockFace> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
+  tickWithHaptic() {
+    final now = DateTime.now();
+    Future.delayed(aMillisecond * 600, () {
+      if (now.second == 0) {
+        if (now.minute == 0) {
+          HapticFeedback.heavyImpact();
+        } else {
+          HapticFeedback.mediumImpact();
+        }
+      } else {
+        HapticFeedback.lightImpact();
+      }
+    });
+  }
+
+  startTick() {
     time = _genTime;
     _timer = Timer.periodic(aSecond, (timer) {
       time = _genTime;
       if (timer.tick % 12 == 0) {
         _offset = _randomValue;
       }
+      tickWithHaptic();
       setState(() {});
     });
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        startTick();
+        break;
+      case AppLifecycleState.inactive:
+        _timer.cancel();
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addObserver(this);
+    startTick();
+  }
+
+  @override
   void dispose() {
     _timer.cancel();
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 

@@ -3,8 +3,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:just_clock/animated_blur.dart';
-import 'package:just_clock/animated_translate.dart';
+import 'package:just_clock/widgets/animated_blur.dart';
+import 'package:just_clock/widgets/animated_translate.dart';
 import 'package:quiver/time.dart';
 
 /// 24h clock face
